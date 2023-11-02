@@ -23,5 +23,5 @@ urlpatterns = [
     path("notification/", include("account.urls")),
     path("billing/", include("billing.urls")),
     path("account/", include("account.urls")),
-    path("", include("services.urls")),
+    path("", include("service.urls")),
 ]

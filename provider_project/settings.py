@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'billing.apps.BillingConfig',
     'news.apps.NewsConfig',
     'notification.apps.NotificationConfig',
-    'services.apps.ServicesConfig',
+    'service.apps.ServicesConfig',
 ]
 
 MIDDLEWARE = [

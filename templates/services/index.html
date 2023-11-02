@@ -5,9 +5,9 @@
     <h2>Services page</h2>
     <nav>
         <ul>
-            <li><a href="">Internet</a></li>
-            <li><a href="">IP-TV</a></li>
-            <li><a href="">Devices</a></li>
+            {% for service in services %}
+            <li><a href="">{{ service.name }}</a></li>
+            {% endfor %}
         </ul>
     </nav>
 {% endblock %}
