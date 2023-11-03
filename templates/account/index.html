@@ -1,11 +1,19 @@
 {% extends "base.html" %}
-{% block title %}Billing page{% endblock %}
+{% block title %}Account page{% endblock %}
 
 {% block content %}
-    <h2>Billing page</h2>
-    <nav>
-        <ul>
-            <li><a href="">account</a></li>
-        </ul>
-    </nav>
+    <h2>Account page</h2>
+    {% if user.is_authenticated %}
+        <p>{{ user_info.last_name }} Last name</p>
+        <p>{{ user_info.first_name }} First_name</p>
+        <p>{{ user_info.phone }} Phone</p>
+        <p>{{ user_info.balance }} Balance</p>
+        <form method="post" action="{% url 'user_logout' %}">
+            {% csrf_token %}
+            <button type="submit">logout</button>
+        </form>
+    {% else %}
+        <li><a href="{% url 'user_login' %}">Login</a></li>
+        <li><a href="{% url 'user_register' %}">Register</a></li>
+    {% endif %}
 {% endblock %}

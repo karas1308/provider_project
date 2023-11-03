@@ -1,5 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+{% block title %}Login page{% endblock %}
+
+{% block content %}
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
@@ -10,10 +12,12 @@
 <div>
     <form method="post">
         {% csrf_token %}
-        <input type="text" name="username" required>
-        <input type="password" name="password"required>
+        <label for="phone">Phone</label>
+        <input name="phone" id="phone" required> <br>
+        <label for="password">Password</label>
+        <input name="password" id="password" required> <br>
         <input type="submit" value="Login">
     </form>
 </div>
 </body>
-</html>
+{% endblock %}

@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 
@@ -17,3 +18,7 @@ class User(AbstractBaseUser):
     balance = models.DecimalField(default=0, max_digits=10, decimal_places=2)
     address = models.ForeignKey(Address, on_delete=models.CASCADE, blank=True, null=True)
 
+    def save(self, *args, **kwargs):
+        if not self.password.startswith(('sha1$', 'bcrypt$', 'pbkdf2_sha256$')):
+            self.password = make_password(self.password)
+        super().save(*args, **kwargs)

@@ -7,22 +7,27 @@ from account.models import User
 
 # Create your views here.
 def account(request):
+    # user_info = User.objects.get(phone=phone)
+    # return render(request, template_name="account/index.html", context={"user_info": user_info})
+
     return render(request, template_name="account/index.html")
 
 
 def user_login(request):
     if request.method == "POST":
-        username = request.POST.get("username")
+        phone = request.POST.get("phone")
         password = request.POST.get("password")
         user = authenticate(
             request,
-            username=username,
+            phone=phone,
             password=password
         )
         if user is not None:
-            login(request, user)
-            response_text = "ok"
-            return HttpResponse(response_text)
+            login(request, user, backend="account.utils.PhoneBackend")
+            # response_text = "ok"
+            user_info = User.objects.get(phone=phone)
+            return render(request, template_name="account/index.html", context={"user_info": user_info})
+            # return HttpResponse(response_text)
         else:
             response_text = "fail"
             return HttpResponseNotFound(response_text)
