@@ -4,11 +4,22 @@
 {% block content %}
     <h2>Billing page</h2>
     {% if user.is_authenticated %}
-    <nav>
-        <ul>
-            <li><a href="">balance</a></li>
-        </ul>
-    </nav>
+        <p>{{ user.balance }} Balance</p>
+
+
+        <form method="post" action="{% url 'pay' %}">
+            {% csrf_token %}
+            <label for="services">Choose a service:</label>
+            <select id="services" name="services">
+                <option value="Internet 100 unlim">Internet 100 unlim</option>
+                <option value="Internet 1000 unlim">Internet 1000 unlim</option>
+            </select>
+            <label for="amount">Amount</label>
+            <input name="amount" id="amount" required> <br>
+            <button type="submit">Pay</button>
+        </form>
+
+
     {% else %}
         <li><a href="{% url 'user_login' %}">Login</a></li>
         <li><a href="{% url 'user_register' %}">Register</a></li>

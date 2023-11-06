@@ -10,7 +10,7 @@
 <h1>Login</h1>
 <br>
 <div>
-    <form method="post">
+    <form method="post" action="{% url 'user_login' %}">
         {% csrf_token %}
         <label for="phone">Phone</label>
         <input name="phone" id="phone" required> <br>

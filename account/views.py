@@ -3,14 +3,17 @@ from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import redirect, render
 
 from account.models import User
+from billing.models import Transaction
 
 
 # Create your views here.
 def account(request):
-    # user_info = User.objects.get(phone=phone)
-    # return render(request, template_name="account/index.html", context={"user_info": user_info})
+    if request.user.is_authenticated:
+        user_info = User.objects.get(id=request.user.id)
+        active_transactions = Transaction.objects.filter(user=user_info, is_expired=False).all()
+        return render(request, template_name="account/index.html", context={"user_info": user_info})
+    return render(request, template_name="account/login.html")
 
-    return render(request, template_name="account/index.html")
 
 
 def user_login(request):

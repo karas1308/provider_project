@@ -5,7 +5,7 @@
     <title>Title</title>
 </head>
 <body>
-<form method="post">
+<form method="post" action="{% url 'user_register' %}">
     {% csrf_token %}
         <label for="email">Email</label>
         <input name="email" id="email" required> <br>

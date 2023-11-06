@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Payment page{% endblock %}
+
+{% block content %}
+    <h2>Payment page</h2>
+    {% if user.is_authenticated %}
+        <h2>{{ payment_info }}</h2>
+        <form method="POST" action="https://www.liqpay.ua/api/3/checkout" accept-charset="utf-8">
+            <input type="hidden" name="data" value="{{ data }}"/>
+            <input type="hidden" name="signature" value="{{ signature }}"/>
+            <input type="image"
+                   src="//static.liqpay.ua/buttons/p1ru.radius.png"/>
+        </form>
+    {% else %}
+        <li><a href="{% url 'user_login' %}">Login</a></li>
+        <li><a href="{% url 'user_register' %}">Register</a></li>
+    {% endif %}
+{% endblock %}
