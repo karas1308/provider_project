@@ -7,9 +7,9 @@ from account.models import User, UserService
 from common import get_utc_date_time
 from service.models import ServiceRate
 #
-# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "provider_project.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "provider_project.settings")
 app = Celery('celery_task', broker='pyamqp://guest@rabbit_mq//')
-# app.config_from_object('django.conf:settings', namespace='CELERY')
+app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
 
 
