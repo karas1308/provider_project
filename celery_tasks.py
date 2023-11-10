@@ -6,10 +6,10 @@ from celery import Celery
 from account.models import User, UserService
 from common import get_utc_date_time
 from service.models import ServiceRate
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "provider_project.settings")
+#
+# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "provider_project.settings")
 app = Celery('celery_task', broker='pyamqp://guest@rabbit_mq//')
-app.config_from_object('django.conf:settings', namespace='CELERY')
+# app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
 
 
@@ -54,8 +54,8 @@ def task_2():
     print("task_2")
 
 
-@app.on_after_configure.connect
-def setup_periodic_tasks(sender, **kwargs):
+# @app.on_after_configure.connect
+# def setup_periodic_tasks(sender, **kwargs):
     # Calls test('hello') every 10 seconds.
     # sender.add_periodic_task(10.0, check_balances_and_notify.s('hello'), name='add every 10')
 
@@ -73,5 +73,5 @@ def setup_periodic_tasks(sender, **kwargs):
     #     crontab(hour=7, minute=30, day_of_week=1),
     #     test.s('Happy Mondays!'),
     # )
-    result1 = task_1.delay()
-    result2 = task_2.delay()
+    # result1 = task_1.delay()
+    # result2 = task_2.delay()

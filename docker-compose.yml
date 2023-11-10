@@ -29,7 +29,7 @@ services:
     hostname: celery_worker1
     working_dir: /app
     build: .
-    command: celery -A celery_tasks.celery worker --loglevel=info
+    command: celery -A celery_tasks.app worker --loglevel=info
     environment:
       DJANGO_SETTINGS_MODULE: provider_project.settings
     depends_on:
@@ -41,7 +41,7 @@ services:
     container_name: celery_beat1
     hostname: celery_beat1
     build: .
-    command: celery -A celery_tasks.celery worker --loglevel=info -B -Q beat1
+    command: celery -A celery_tasks.app worker --loglevel=info -B -Q beat1
     environment:
       DJANGO_SETTINGS_MODULE: provider_project.settings
     depends_on:
