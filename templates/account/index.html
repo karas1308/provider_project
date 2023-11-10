@@ -4,11 +4,43 @@
 {% block content %}
     <h2>Account page</h2>
     {% if user.is_authenticated %}
+
+        <h2>USER INFO</h2>
         <p>{{ user_info.last_name }} Last name</p>
         <p>{{ user_info.first_name }} First_name</p>
         <p>{{ user_info.phone }} Phone</p>
         <p>{{ user_info.balance }} Balance</p>
-        <form method="post" action="{% url 'user_logout' %}">
+
+        {% if user_services %}
+            {% for service in user_services %}
+                <h2>You have this subscribes:</h2>
+                <p>{{ service.service.name }}</p>
+            {% endfor %}
+        {% endif %}
+
+        {% if services_to_subscribe %}
+            <form method="post" action="{% url 'subscribe_services' %}">
+                {% csrf_token %}
+                <label for="services_to_subscribe">Choose a service:</label>
+                <select id="services_to_subscribe" name="services_to_subscribe">
+                    <option value="">Select service to subscribe</option>
+                    {% for service in services_to_subscribe %}
+                        <option value="{{ service.name }}">{{ service.name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Subscribe</button>
+            </form>
+        {% endif %}
+
+        {% if active_transactions %}
+            <h2>You have active payment transactions. Click button to validate them</h2>
+            <form method="post" action="{% url 'check_transactions' %}">
+                {% csrf_token %}
+                <button type="submit">Check payment transactions</button>
+            </form>
+        {% endif %}
+
+        <form method="post" action="{% url 'check_balances_and_notify' %}">
             {% csrf_token %}
             <button type="submit">logout</button>
         </form>

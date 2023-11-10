@@ -1,8 +1,7 @@
-from datetime import datetime, timedelta
-
 from django.db import models
 
 from account.models import User
+from common import get_utc_date_time
 from service.models import Service
 
 
@@ -14,6 +13,6 @@ class Transaction(models.Model):
     order_id = models.CharField(max_length=36)
     amount = models.IntegerField()
     successful_payment = models.BooleanField(default=False)
-    created_at = models.DateTimeField(default=datetime.utcnow())
-    expired_at = models.DateTimeField(default=datetime.utcnow() + timedelta(hours=1))
+    created_at = models.DateTimeField(default=get_utc_date_time())
+    expired_at = models.DateTimeField(default=get_utc_date_time(hours=1))
     is_expired = models.BooleanField(default=False)

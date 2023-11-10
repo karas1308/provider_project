@@ -11,8 +11,10 @@
             {% csrf_token %}
             <label for="services">Choose a service:</label>
             <select id="services" name="services">
-                <option value="Internet 100 unlim">Internet 100 unlim</option>
-                <option value="Internet 1000 unlim">Internet 1000 unlim</option>
+                <option value="">Select service</option>
+                {% for service in services %}
+                    <option value="{{ service.name }}">{{ service.name }}</option>
+                {% endfor %}
             </select>
             <label for="amount">Amount</label>
             <input name="amount" id="amount" required> <br>

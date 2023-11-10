@@ -91,8 +91,8 @@ DATABASES = {
         'NAME': 'provider',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
-        'HOST': '127.0.0.1',
-        # 'HOST': 'pg_provider',
+        # 'HOST': '127.0.0.1',
+        'HOST': 'pg_provider',
         'PORT': '5432',
     }
 }

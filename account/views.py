@@ -1,9 +1,12 @@
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
+from django.http import HttpResponseNotFound, JsonResponse
 from django.shortcuts import redirect, render
 
-from account.models import User
+from account.models import User, UserService
 from billing.models import Transaction
+from common import get_utc_date_time
+from config import HOSTNAME
+from service.models import Service, ServiceRate
 
 
 # Create your views here.
@@ -11,9 +14,21 @@ def account(request):
     if request.user.is_authenticated:
         user_info = User.objects.get(id=request.user.id)
         active_transactions = Transaction.objects.filter(user=user_info, is_expired=False).all()
-        return render(request, template_name="account/index.html", context={"user_info": user_info})
+        services = Service.objects.all()
+        user_services = UserService.objects.filter(user=user_info, is_active=True)
+        user_services_names = [user_service.service.name for user_service in user_services]
+        services_to_subscribe = []
+        if user_services:
+            for service in services:
+                if service.name not in user_services_names:
+                    services_to_subscribe.append(service)
+        else:
+            services_to_subscribe = services
+        return render(request, template_name="account/index.html",
+                      context={"user_info": user_info, "user_services": user_services,
+                               "active_transactions": active_transactions,
+                               "services_to_subscribe": services_to_subscribe})
     return render(request, template_name="account/login.html")
-
 
 
 def user_login(request):
@@ -65,3 +80,17 @@ def user_register(request):
             response_text = "fail"
             return HttpResponseNotFound(response_text)
     return render(request, template_name="account/register.html")
+
+
+def check_balances_and_notify(request):
+    user_service = UserService.objects.filter(is_active=True, user__is_active=True)
+    service_rates = ServiceRate.objects.filter(start_date__lte=get_utc_date_time(date_format="%Y-%m-%d"),
+                                               end_date__gt=get_utc_date_time(date_format="%Y-%m-%d"))
+    print(user_service)
+
+
+def subscribe_services(request):
+    services_to_subscribe = request.POST.get("services_to_subscribe")
+    services_to_subscribe = Service.objects.get(name=services_to_subscribe)
+    UserService.objects.create(user=request.user, service=services_to_subscribe)
+    return redirect(f'http://{HOSTNAME}:8000/account')
