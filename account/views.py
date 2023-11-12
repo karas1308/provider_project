@@ -1,3 +1,5 @@
+import decimal
+
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseNotFound, JsonResponse
 from django.shortcuts import redirect, render
@@ -6,6 +8,8 @@ from account.models import User, UserService
 from billing.models import Transaction
 from common import get_utc_date_time
 from config import HOSTNAME
+from constants import user_confirm_body, user_suspended_notif_body
+from provider_project.celery_tasks import get_user_services
 from service.models import Service, ServiceRate
 
 
@@ -81,18 +85,25 @@ def user_register(request):
             return HttpResponseNotFound(response_text)
     return render(request, template_name="account/register.html")
 
-
-def check_balances_and_notify(request):
-    user_services = UserService.objects.filter(is_active=True, user=request.user)
-    user_service_names = [service.service.name for service in user_services]
-    user_balance = user_services[0].user.balance
-    service_rates = ServiceRate.objects.filter(start_date__lte=get_utc_date_time(date_format="%Y-%m-%d"),
-                                               end_date__gt=get_utc_date_time(date_format="%Y-%m-%d"),
-                                               service__name__in=user_service_names)
-
-    user_service_to_block = User.objects.filter(id=request.user.id)
-    user_service_to_block.update(balance=user_balance - int(sum(rate.price for rate in service_rates) / 30))
-
+#
+# def check_balances_and_notify(request):
+#     user_services = get_user_services(request.user)
+#     user_service_names = [service.service.name for service in user_services]
+#     user_balance = user_services[0].user.balance
+#     service_rates = ServiceRate.objects.filter(start_date__lte=get_utc_date_time(date_format="%Y-%m-%d"),
+#                                                end_date__gt=get_utc_date_time(date_format="%Y-%m-%d"),
+#                                                service__name__in=user_service_names)
+#     services_price = sum(rate.price for rate in service_rates)
+#     if services_price / 10 > user_balance >= services_price / 30:
+#         email_body = user_confirm_body.format(request.user.balance,
+#                                               int(user_balance / decimal.Decimal((services_price / 30))))
+#         # mail_sender(user.email, email_body)
+#     elif user_balance < services_price / 30:
+#         email_body = user_suspended_notif_body.format(request.user.balance)
+#         # mail_sender(user.email, email_body)
+#         user_service_to_block = UserService.objects.filter(user=request.user)
+#         user_service_to_block.update(is_active=False)
+#
 
 def subscribe_services(request):
     services_to_subscribe = request.POST.get("services_to_subscribe")

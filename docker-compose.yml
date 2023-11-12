@@ -3,6 +3,9 @@ services:
     container_name: provider_app
     environment:
       DJANGO_SETTINGS_MODULE: provider_project.settings
+      RQ_HOSTNAME: rabbit_mq
+      PG_HOSTNAME: pg_provider
+      PG_PASSWORD: postgres
     build:
       context: .
       dockerfile: Dockerfile
@@ -28,6 +31,9 @@ services:
     hostname: celery_worker
     build: .
     environment:
+      RQ_HOSTNAME: rabbit_mq
+      PG_HOSTNAME: pg_provider
+      PG_PASSWORD: postgres
       DJANGO_SETTINGS_MODULE: provider_project.settings
     command: celery -A provider_project.celery_tasks.celery worker --loglevel=info --pool=solo -B
     depends_on:

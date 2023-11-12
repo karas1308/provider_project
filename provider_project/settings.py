@@ -13,6 +13,8 @@ import os
 from pathlib import Path
 from typing import List
 
+import config
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -90,9 +92,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'provider',
         'USER': 'postgres',
-        'PASSWORD': 'postgres',
+        'PASSWORD': config.PG_PASSWORD,
         # 'HOST': '127.0.0.1',
-        'HOST': 'pg_provider',
+        'HOST': config.PG_HOSTNAME,
         'PORT': '5432',
     }
 }
@@ -141,6 +143,6 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-CELERY_BROKER_URL = 'pyamqp://guest@rabbit_mq//'
-# CELERY_BROKER_URL = 'pyamqp://guest@localhost//'
+# CELERY_BROKER_URL = 'pyamqp://guest@rabbit_mq//'
+CELERY_BROKER_URL = f'pyamqp://guest@{config.RQ_HOSTNAME}//'
 

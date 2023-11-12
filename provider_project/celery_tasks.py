@@ -1,7 +1,8 @@
+import decimal
+
 import django
 from celery.schedules import crontab
 
-from email_sender import mail_sender
 from logger import log
 
 django.setup()
@@ -32,10 +33,13 @@ def check_balances_and_notify(user):
                                                service__name__in=user_service_names)
     services_price = sum(rate.price for rate in service_rates)
     if services_price / 10 > user_balance >= services_price / 30:
-        email_body = user_confirm_body.format(user.balance, int(user_balance / (services_price / 30)))
+        email_body = user_confirm_body.format(user.balance,
+                                              int(user_balance / decimal.Decimal((services_price / 30))))
+        log.info("Sending balance notification to user email '%s'".format(user.email))
         # mail_sender(user.email, email_body)
     elif user_balance < services_price / 30:
         email_body = user_suspended_notif_body.format(user.balance)
+        log.info("Sending balance notification to user email '%s' and disable service".format(user.email))
         # mail_sender(user.email, email_body)
         user_service_to_block = UserService.objects.filter(user=user)
         user_service_to_block.update(is_active=False)
@@ -76,11 +80,11 @@ def daily_balance_decrease_all():
 celery.conf.beat_schedule = {
     'task1': {
         'task': 'provider_project.celery_tasks.daily_balance_decrease_all',
-        'schedule': crontab(hour="12", minute="45"),
+        'schedule': crontab(hour="13", minute="03"),
     },
     'task2': {
         'task': 'provider_project.celery_tasks.notif_all_users',
-        'schedule': crontab(hour="12", minute="46"),
+        'schedule': crontab(hour="13", minute="03"),
     },
 
 }
