@@ -83,10 +83,15 @@ def user_register(request):
 
 
 def check_balances_and_notify(request):
-    user_service = UserService.objects.filter(is_active=True, user__is_active=True)
+    user_services = UserService.objects.filter(is_active=True, user=request.user)
+    user_service_names = [service.service.name for service in user_services]
+    user_balance = user_services[0].user.balance
     service_rates = ServiceRate.objects.filter(start_date__lte=get_utc_date_time(date_format="%Y-%m-%d"),
-                                               end_date__gt=get_utc_date_time(date_format="%Y-%m-%d"))
-    print(user_service)
+                                               end_date__gt=get_utc_date_time(date_format="%Y-%m-%d"),
+                                               service__name__in=user_service_names)
+
+    user_service_to_block = User.objects.filter(id=request.user.id)
+    user_service_to_block.update(balance=user_balance - int(sum(rate.price for rate in service_rates) / 30))
 
 
 def subscribe_services(request):

@@ -1,3 +1,3 @@
-# from celery_tasks import app as celery_app
-#
-# __all__ = ('celery_app',)
+from provider_project.celery_tasks import celery
+
+__all__ = ('celery',)

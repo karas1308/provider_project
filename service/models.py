@@ -45,8 +45,9 @@ class Street(models.Model):
 
 
 class Address(models.Model):
+    city = models.ForeignKey(City, on_delete=models.CASCADE, blank=True, default="")
     street = models.ForeignKey(Street, on_delete=models.CASCADE)
     building = models.IntegerField()
-    apt = models.IntegerField(blank=True)
-    entrance = models.IntegerField(blank=True)
-    floor = models.IntegerField(blank=True)
+    apt = models.IntegerField(blank=True, null=True)
+    entrance = models.IntegerField(blank=True, null=True)
+    floor = models.IntegerField(blank=True, null=True)

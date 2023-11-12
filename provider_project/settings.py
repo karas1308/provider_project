@@ -140,3 +140,7 @@ AUTHENTICATION_BACKENDS = [
     'account.utils.PhoneBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+CELERY_BROKER_URL = 'pyamqp://guest@rabbit_mq//'
+# CELERY_BROKER_URL = 'pyamqp://guest@localhost//'
+

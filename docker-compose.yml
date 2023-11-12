@@ -24,26 +24,12 @@ services:
     ports:
       - 5432:5432
 
-  celery_worker1:
-    container_name: celery_worker1
-    hostname: celery_worker1
-    working_dir: /app
+  celery_worker:
+    hostname: celery_worker
     build: .
-    command: celery -A celery_tasks.app worker --loglevel=info
     environment:
       DJANGO_SETTINGS_MODULE: provider_project.settings
-    depends_on:
-      - db_container
-      - rabbit_mq
-    env_file: .env
-
-  celery_beat1:
-    container_name: celery_beat1
-    hostname: celery_beat1
-    build: .
-    command: celery -A celery_tasks.app worker --loglevel=info -B -Q beat1
-    environment:
-      DJANGO_SETTINGS_MODULE: provider_project.settings
+    command: celery -A provider_project.celery_tasks.celery worker --loglevel=info --pool=solo -B
     depends_on:
       - db_container
       - rabbit_mq
