@@ -15,6 +15,20 @@
             <p>{{ user_address.city }} city</p>
             <p>{{ user_address.street }} street</p>
             <p>{{ user_address.building.building }} building</p>
+
+            {% if services_to_subscribe %}
+                <form method="post" action="{% url 'subscribe_services' %}">
+                    {% csrf_token %}
+                    <label for="services_to_subscribe">Choose a service:</label>
+                    <select id="services_to_subscribe" name="services_to_subscribe">
+                        <option value="">Select service to subscribe</option>
+                        {% for service in services_to_subscribe %}
+                            <option value="{{ service.name }}">{{ service.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit">Subscribe</button>
+                </form>
+            {% endif %}
         {% else %}
             {#            <form method="post" action="{% url 'user_update' %}">#}
             <form method="get">
@@ -64,19 +78,7 @@
             {% endfor %}
         {% endif %}
 
-        {% if services_to_subscribe %}
-            <form method="post" action="{% url 'subscribe_services' %}">
-                {% csrf_token %}
-                <label for="services_to_subscribe">Choose a service:</label>
-                <select id="services_to_subscribe" name="services_to_subscribe">
-                    <option value="">Select service to subscribe</option>
-                    {% for service in services_to_subscribe %}
-                        <option value="{{ service.name }}">{{ service.name }}</option>
-                    {% endfor %}
-                </select>
-                <button type="submit">Subscribe</button>
-            </form>
-        {% endif %}
+
 
         {% if active_transactions %}
             <h2>You have active payment transactions. Click button to validate them</h2>

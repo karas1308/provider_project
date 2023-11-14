@@ -114,7 +114,7 @@ def user_register(request):
                                    password=password,
                                    )
         if user.phone == phone:
-            return JsonResponse({"username": user.phone}, safe=False)
+            return redirect(f'http://{HOSTNAME}:8000/account/login')
         else:
             response_text = "fail"
             return HttpResponseNotFound(response_text)
