@@ -1,21 +1,18 @@
 import decimal
+import os
 
 import django
-from celery.schedules import crontab
 
-from logger import log
-
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "provider_project.settings")
 django.setup()
+from celery.schedules import crontab
+from billing.common import update_transactions_statuses
+from logger import log
 from celery import Celery
-
 from account.models import User, UserService
 from common import get_utc_date_time
 from constants import user_confirm_body, user_suspended_notif_body
 from service.models import ServiceRate
-
-# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "provider_project.settings")
-
-#
 
 celery = Celery('provider_project')
 celery.config_from_object('django.conf:settings', namespace='CELERY')
@@ -23,7 +20,6 @@ celery.autodiscover_tasks()
 celery.conf.timezone = 'Europe/Kiev'
 
 
-#
 def check_balances_and_notify(user):
     user_services = get_user_services(user)
     user_service_names = [service.service.name for service in user_services]
@@ -77,6 +73,14 @@ def daily_balance_decrease_all():
         daily_balance_decrease(user)
 
 
+@celery.task
+def update_user_transaction_statuses():
+    users = User.objects.filter(is_active=True)
+    for user in users:
+        log.info("check user payment transaction. User id %s".format(user.id))
+        update_transactions_statuses(user)
+
+
 celery.conf.beat_schedule = {
     'task1': {
         'task': 'provider_project.celery_tasks.daily_balance_decrease_all',
@@ -85,6 +89,10 @@ celery.conf.beat_schedule = {
     'task2': {
         'task': 'provider_project.celery_tasks.notif_all_users',
         'schedule': crontab(hour="13", minute="03"),
+    },
+    'task3': {
+        'task': 'provider_project.celery_tasks.update_user_transaction_statuses',
+        'schedule': crontab(minute='*/15'),
     },
 
 }
