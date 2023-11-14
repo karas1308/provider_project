@@ -4,8 +4,17 @@
 {% block content %}
     <h2>News page</h2>
     <nav>
-        <ul>
-            <li><a href="">news1</a></li>
-        </ul>
+        {% if news %}
+            {% for n in news %}
+                <h2>{{ n.title }}</h2>
+                <p>{{ n.create_at }} Date</p>
+                <p>{{ n.entry }} entry</p>
+                {% if n.media %}
+                <p><a href="{{ n.media.url }}"> <img class="img-article-left thumb"
+                                                            src="{{ n.media.url }}" width="100"></a>
+                </p>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
     </nav>
 {% endblock %}

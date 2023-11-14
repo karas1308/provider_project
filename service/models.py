@@ -37,6 +37,7 @@ class City(models.Model):
 
 
 class Street(models.Model):
+    region = models.ForeignKey(Region, on_delete=models.CASCADE, blank=True, default="")
     city = models.ForeignKey(City, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
 
@@ -44,10 +45,11 @@ class Street(models.Model):
         return self.name
 
 
-class Address(models.Model):
+class Building(models.Model):
+    region = models.ForeignKey(Region, on_delete=models.CASCADE, blank=True, default="")
     city = models.ForeignKey(City, on_delete=models.CASCADE, blank=True, default="")
     street = models.ForeignKey(Street, on_delete=models.CASCADE)
     building = models.IntegerField()
-    apt = models.IntegerField(blank=True, null=True)
-    entrance = models.IntegerField(blank=True, null=True)
-    floor = models.IntegerField(blank=True, null=True)
+
+    def __str__(self):
+        return self.building

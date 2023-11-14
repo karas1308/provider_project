@@ -1,16 +1,11 @@
-import decimal
-
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseNotFound, JsonResponse
 from django.shortcuts import redirect, render
 
-from account.models import User, UserService
+from account.models import User, UserAddress, UserService
 from billing.models import Transaction
-from common import get_utc_date_time
 from config import HOSTNAME
-from constants import user_confirm_body, user_suspended_notif_body
-from provider_project.celery_tasks import get_user_services
-from service.models import Service, ServiceRate
+from service.models import Building, City, Region, Service, Street
 
 
 # Create your views here.
@@ -28,11 +23,51 @@ def account(request):
                     services_to_subscribe.append(service)
         else:
             services_to_subscribe = services
+        regions = None
+        cities = None
+        streets = None
+        buildings = None
+        region = request.GET.get("region")
+        city = request.GET.get("city")
+        street = request.GET.get("street")
+        building = request.GET.get("building")
+        user_address = None
+        try:
+            user_address = user_info.useraddress
+        except Exception:
+            pass
+        if not user_address:
+            regions = Region.objects.all()
+            cities = City.objects.filter(region__name=region)
+            streets = Street.objects.filter(region__name=region,
+                                            city__name=city)
+            buildings = Building.objects.filter(region__name=region,
+                                                city__name=city,
+                                                street__name=street)
+        if region and city and street and building:
+            apt = request.GET.get("apt")
+            entrance = request.GET.get("entrance")
+            floor = request.GET.get("floor")
+            UserAddress.objects.create(user=request.user,
+                                       region=Region.objects.get(name=region),
+                                       city=City.objects.get(name=city),
+                                       street=Street.objects.get(name=street),
+                                       building=Building.objects.get(building=building),
+                                       apt=apt,
+                                       entrance=entrance,
+                                       floor=floor)
         return render(request, template_name="account/index.html",
-                      context={"user_info": user_info, "user_services": user_services,
+                      context={"user_info": user_info,
+                               "user_address": user_address,
+                               "user_services": user_services,
                                "active_transactions": active_transactions,
-                               "services_to_subscribe": services_to_subscribe})
-    return render(request, template_name="account/login.html")
+                               "services_to_subscribe": services_to_subscribe,
+                               "regions": regions,
+                               "cities": cities,
+                               "streets": streets,
+                               "buildings": buildings
+                               })
+    return render(request, template_name="account/index.html")
 
 
 def user_login(request):
@@ -85,6 +120,7 @@ def user_register(request):
             return HttpResponseNotFound(response_text)
     return render(request, template_name="account/register.html")
 
+
 #
 # def check_balances_and_notify(request):
 #     user_services = get_user_services(request.user)
@@ -104,6 +140,9 @@ def user_register(request):
 #         user_service_to_block = UserService.objects.filter(user=request.user)
 #         user_service_to_block.update(is_active=False)
 #
+def user_update(request):
+    pass
+
 
 def subscribe_services(request):
     services_to_subscribe = request.POST.get("services_to_subscribe")

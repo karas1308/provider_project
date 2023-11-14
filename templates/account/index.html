@@ -10,6 +10,52 @@
         <p>{{ user_info.first_name }} First_name</p>
         <p>{{ user_info.phone }} Phone</p>
         <p>{{ user_info.balance }} Balance</p>
+        {% if user_address %}
+            <p>{{ user_address.region }} region</p>
+            <p>{{ user_address.city }} city</p>
+            <p>{{ user_address.street }} street</p>
+            <p>{{ user_address.building.building }} building</p>
+        {% else %}
+            {#            <form method="post" action="{% url 'user_update' %}">#}
+            <form method="get">
+                {% csrf_token %}
+                <label for="region">Choose your region:</label>
+                <select id="region" name="region">
+                    <option value="">Select your region</option>
+                    {% for region in regions %}
+                        <option value="{{ region.name }}">{{ region.name }}</option>
+                    {% endfor %}
+                </select>
+                {% if cities %}
+                    <label for="city">Choose your city:</label>
+                    <select id="city" name="city">
+                        <option value="">Select your city</option>
+                        {% for city in cities %}
+                            <option value="{{ city.name }}">{{ city.name }}</option>
+                        {% endfor %}
+                    </select>
+                {% endif %}
+                {% if streets %}
+                    <label for="street">Choose your street:</label>
+                    <select id="street" name="street">
+                        <option value="">Select your street</option>
+                        {% for street in streets %}
+                            <option value="{{ street.name }}">{{ street.name }}</option>
+                        {% endfor %}
+                    </select>
+                {% endif %}
+                {% if buildings %}
+                    <label for="building">Choose your building:</label>
+                    <select id="building" name="building">
+                        <option value="">Select your building</option>
+                        {% for building in buildings %}
+                            <option value="{{ building.building }}">{{ building.building }}</option>
+                        {% endfor %}
+                    </select>
+                {% endif %}
+                <button type="submit">Apply address</button>
+            </form>
+        {% endif %}
 
         {% if user_services %}
             {% for service in user_services %}
