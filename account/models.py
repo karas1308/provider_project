@@ -25,7 +25,7 @@ class User(AbstractBaseUser):
 
 
 class UserAddress(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, default="")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, default="")
     region = models.ForeignKey(Region, on_delete=models.CASCADE, blank=True, default="")
     city = models.ForeignKey(City, on_delete=models.CASCADE)
     street = models.ForeignKey(Street, on_delete=models.CASCADE)
