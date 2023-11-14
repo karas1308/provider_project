@@ -86,11 +86,11 @@ def update_user_transaction_statuses():
 celery.conf.beat_schedule = {
     'task1': {
         'task': 'provider_project.celery_tasks.daily_balance_decrease_all',
-        'schedule': crontab(hour="13", minute="03"),
+        'schedule': crontab(hour="2", minute="00"),
     },
     'task2': {
         'task': 'provider_project.celery_tasks.notif_all_users',
-        'schedule': crontab(hour="13", minute="03"),
+        'schedule': crontab(hour="1", minute="00"),
     },
     'task3': {
         'task': 'provider_project.celery_tasks.update_user_transaction_statuses',
