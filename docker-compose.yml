@@ -1,6 +1,7 @@
 services:
   web_app:
     container_name: provider_app
+    hostname: provider_app
     environment:
       DJANGO_SETTINGS_MODULE: provider_project.settings
       RQ_HOSTNAME: rabbit_mq
