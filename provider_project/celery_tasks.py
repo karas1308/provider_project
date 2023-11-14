@@ -3,6 +3,8 @@ import os
 
 import django
 
+from email_sender import mail_sender
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "provider_project.settings")
 django.setup()
 from celery.schedules import crontab
@@ -32,11 +34,11 @@ def check_balances_and_notify(user):
         email_body = user_confirm_body.format(user.balance,
                                               int(user_balance / decimal.Decimal((services_price / 30))))
         log.info("Sending balance notification to user email '%s'".format(user.email))
-        # mail_sender(user.email, email_body)
+        mail_sender(user.email, email_body)
     elif user_balance < services_price / 30:
         email_body = user_suspended_notif_body.format(user.balance)
         log.info("Sending balance notification to user email '%s' and disable service".format(user.email))
-        # mail_sender(user.email, email_body)
+        mail_sender(user.email, email_body)
         user_service_to_block = UserService.objects.filter(user=user)
         user_service_to_block.update(is_active=False)
 

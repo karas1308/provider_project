@@ -8,6 +8,9 @@ subject = "Notification"
 user_confirm_body = """
 Your balance is {}. Please fund your balance. Services will be suspended in {} days.
 """
+user_subscribe_service_body = """
+You subscribed {} service. Thank you for your choice.
+"""
 user_suspended_notif_body = """
 Your balance is {}. Please fund your balance. Services is suspended.
 """
