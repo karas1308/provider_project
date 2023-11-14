@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponseNotFound, JsonResponse
+from django.http import HttpResponseNotFound
 from django.shortcuts import redirect, render
 
 from account.models import User, UserAddress, UserService
